@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Alarm Clock</title>
+  <style>
+    /* General Styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #ffffff;
+      color: #333333;
+      transition: background-color 0.5s ease, color 0.5s ease;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      position: relative;
+      width: 300px;
+      height: 400px;
+      border: 10px solid #333333;
+      border-radius: 20px;
+      background-color: #f0f0f0;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    /* Time Display (Alarm Clock Style) */
+    #time {
+      font-size: 3rem;
+      font-weight: bold;
+      letter-spacing: 5px;
+      margin-top: 50px;
+      color: #ff6f61;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Sun Animation */
+    .sun {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: #ffeb3b;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+      animation: none; /* Default state */
+    }
+
+    /* Morning Animation */
+    @keyframes sunrise {
+      0% {
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      100% {
+        bottom: 70%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Evening Animation */
+    @keyframes sunset {
+      0% {
+        bottom: 70%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      100% {
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Mode Toggle Button */
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      background-color: #333333;
+      color: #ffffff;
+    }
+
+    body.dark-mode button {
+      background-color: #ff6f61;
+    }
+
+    body.dark-mode .container {
+      background-color: #444444;
+      border-color: #ffffff;
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <div class="container">
+    <h1>The time is:</h1>
+    <h1 id="time">--:--:--</h1>
+    <div class="sun"></div>
+    <button id="mode-toggle">Switch to Dark Mode</button>
+  </div>
+
+  <script>
+
+    // Function to update the time every second
+    function updateTime() {
+      const timeElement = document.getElementById('time');
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Function to change background color and animate the sun based on time
+    function updateBackgroundColorAndSun() {
+      const now = new Date();
+      const hours = now.getHours();
+      const body = document.body;
+      const sun = document.querySelector('.sun');
+
+      if (hours >= 6 && hours < 12) {
+        // Morning: Sunrise Animation
+        body.style.backgroundColor = '#e0f7fa'; // Light blue
+        sun.style.animation = 'sunrise 5s forwards';
+      } else if (hours >= 12 && hours < 18) {
+        // Afternoon: No animation, sun stays high
+        body.style.backgroundColor = '#fff3e0'; // Light orange
+        sun.style.animation = 'none';
+        sun.style.bottom = '70%';
+      } else {
+        // Evening/Night: Sunset Animation
+        body.style.backgroundColor = '#2c3e50'; // Dark blue
+        sun.style.animation = 'sunset 5s forwards';
+      }
+    }
+
+    // Function to toggle between light and dark modes
+    function toggleMode() {
+      const body = document.body;
+      const modeToggleBtn = document.getElementById('mode-toggle');
+
+      if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        modeToggleBtn.textContent = 'Switch to Light Mode';
+      } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        modeToggleBtn.textContent = 'Switch to Dark Mode';
+      }
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Start updating the time
+      setInterval(updateTime, 1000);
+      updateTime();
+
+      // Update background color and sun animation based on time
+      updateBackgroundColorAndSun();
+
+      // Add event listener for mode toggle button
+      const modeToggleBtn = document.getElementById('mode-toggle');
+      modeToggleBtn.addEventListener('click', toggleMode);
+    });
+  </script>
+</body>
+</html>
